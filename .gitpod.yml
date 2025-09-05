@@ -1,0 +1,22 @@
+tasks:
+  - name: setup
+    init: |
+      # Ensure go-task is available in Gitpod
+      if ! command -v task >/dev/null 2>&1; then
+        go install github.com/go-task/task/v3/cmd/task@latest
+        export PATH="${HOME}/go/bin:${PATH}"
+      fi
+    command: task tidy
+  - name: run
+    command: task run
+  - name: build
+    command: task build
+  - name: test
+    command: task test
+  - name: lint
+    command: task lint
+
+ports:
+  - port: 3000
+    name: app
+    onOpen: open-preview
