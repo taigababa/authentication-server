@@ -1,0 +1,38 @@
+version: '3'
+
+tasks:
+  tidy:
+    desc: Fetch and tidy Go modules
+    cmds:
+      - go mod tidy
+
+  build:
+    desc: Build server binary to ./app
+    cmds:
+      - go build -o app ./cmd/server
+
+  run:
+    desc: Run the Echo server
+    cmds:
+      - go run ./cmd/server
+
+  test:
+    desc: Run unit tests
+    cmds:
+      - go test ./...
+
+  lint:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+  
+  health:
+    desc: health check server
+    cmds:
+      - curl 'http://localhost:3000/healthz'
+
