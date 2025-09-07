@@ -30,4 +30,9 @@ tasks:
     desc: Show available tasks
     cmds:
       - task --list
+  
+  health:
+    desc: health check server
+    cmds:
+      - curl 'http://localhost:3000/healthz'
 
