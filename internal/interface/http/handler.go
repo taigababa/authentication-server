@@ -1,13 +1,11 @@
 package httpiface
 
 import (
-    "context"
     "crypto/rand"
     "encoding/hex"
     "net/http"
 
     "github.com/labstack/echo/v4"
-    "github.com/labstack/gommon/log"
 
     "tiktok-oauth/internal/domain/oauth"
     "tiktok-oauth/internal/pkg/httpx"
@@ -80,5 +78,3 @@ func tokenToMap(t oauth.Token) map[string]any {
     }
 }
 
-// Ensure imported log is referenced to satisfy linter if not used elsewhere
-var _ = log.INFO
