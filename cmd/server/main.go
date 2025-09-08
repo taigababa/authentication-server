@@ -5,6 +5,7 @@ import (
     "os"
     "time"
     "path/filepath"
+    "strings"
 
     "github.com/labstack/echo/v4"
     "github.com/labstack/echo/v4/middleware"
@@ -62,17 +63,7 @@ func main() {
         return c.String(http.StatusOK, string(b))
     })
 
-    // TikTok sign file (read from contents/tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt)
-    e.GET("/tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt", func(c echo.Context) error {
-        path := filepath.Join("contents", "tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt")
-        b, err := os.ReadFile(path)
-        if err != nil {
-            c.Logger().Errorf("failed to read tiktok sign file: %v", err)
-            return c.String(http.StatusInternalServerError, "tiktok sign file not found")
-        }
-        // return as plain text without modification
-        return c.Blob(http.StatusOK, "text/plain; charset=utf-8", b)
-    })
+    // (removed) specific TikTok sign route; now served by "/:filename"
 
     httpClient := &http.Client{Timeout: 10 * time.Second}
     client := &tiktok.Client{ClientKey: cfg.ClientKey, ClientSecret: cfg.ClientSecret, HTTP: httpClient}
@@ -82,6 +73,29 @@ func main() {
     h := &httpiface.Handler{UC: uc, RedirectURI: cfg.RedirectURI}
     e.GET("/auth/login", h.Login)
     e.GET("/auth/callback", h.Callback)
+
+    // Dynamic file serving: GET /:filename -> contents/signature/:filename
+    e.GET("/:filename", func(c echo.Context) error {
+        name := c.Param("filename")
+        if name == "" || strings.Contains(name, "..") || strings.ContainsAny(name, "/\\") {
+            return c.String(http.StatusBadRequest, "invalid filename")
+        }
+        path := filepath.Join("contents", "signature", name)
+        b, err := os.ReadFile(path)
+        if err != nil {
+            c.Logger().Warnf("file not found in contents: %s", name)
+            return c.String(http.StatusNotFound, "file not found")
+        }
+        ct := "application/octet-stream"
+        lower := strings.ToLower(name)
+        switch {
+        case strings.HasSuffix(lower, ".txt"):
+            ct = "text/plain; charset=utf-8"
+        case strings.HasSuffix(lower, ".html"):
+            ct = "text/html; charset=utf-8"
+        }
+        return c.Blob(http.StatusOK, ct, b)
+    })
 
     addr := ":3000"
     if p := os.Getenv("PORT"); p != "" {
