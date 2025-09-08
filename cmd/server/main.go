@@ -27,9 +27,15 @@ func main() {
     e.Use(middleware.Recover())
     e.Use(middleware.Logger())
 
-    // Top page
+    // Top page (read from contents/index.html)
     e.GET("/", func(c echo.Context) error {
-        return c.HTML(http.StatusOK, indexHTML)
+        path := filepath.Join("contents", "index.html")
+        b, err := os.ReadFile(path)
+        if err != nil {
+            c.Logger().Errorf("failed to read index.html: %v", err)
+            return c.String(http.StatusInternalServerError, "index.html not found")
+        }
+        return c.HTML(http.StatusOK, string(b))
     })
 
     // Healthz
@@ -68,38 +74,3 @@ func main() {
 // silence unused import warnings for context in some environments
 var _ = context.Background
 
-const indexHTML = `<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TikTok OAuth Demo</title>
-    <style>
-      :root { color-scheme: light dark; }
-      body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 2rem; line-height: 1.6; }
-      .box { max-width: 720px; margin: 0 auto; padding: 1.25rem 1.5rem; border: 1px solid #ccc; border-radius: 12px; }
-      h1 { margin-top: 0; font-size: 1.6rem; }
-      .actions { margin-top: 1rem; }
-      .btn { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 0.65rem 1rem; border-radius: 8px; font-weight: 600; }
-      .links { margin-top: 0.75rem; font-size: 0.95rem; }
-      code { background: rgba(127,127,127,0.15); padding: 0.1rem 0.35rem; border-radius: 6px; }
-    </style>
-  </head>
-  <body>
-    <div class="box">
-      <h1>TikTok OAuth Demo</h1>
-      <p>このサーバは TikTok OAuth v2 のサンプル実装です。</p>
-      <div class="actions">
-        <a class="btn" href="/auth/login">Login with TikTok</a>
-      </div>
-      <div class="links">
-        <p>
-          エンドポイント: <code>GET /auth/login</code>, <code>GET /auth/callback</code>, <code>GET /healthz</code>, <code>GET /terms-of-service</code>
-        </p>
-        <p>
-          利用規約は <a href="/terms-of-service">/terms-of-service</a> から確認できます。
-        </p>
-      </div>
-    </div>
-  </body>
-</html>`
