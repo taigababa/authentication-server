@@ -63,7 +63,7 @@ func main() {
     })
 
     // TikTok sign file (read from contents/tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt)
-    e.GET("/tiktok/sign", func(c echo.Context) error {
+    e.GET("/tiktok/sign/", func(c echo.Context) error {
         path := filepath.Join("contents", "tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt")
         b, err := os.ReadFile(path)
         if err != nil {
