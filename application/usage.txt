@@ -1,0 +1,9 @@
+Our app is an analytics tool that helps creators and businesses track TikTok performance.
+
+User Info (user.info.basic): Identifies the authenticated account and retrieves basic profile data to link the correct user.
+
+User Data (user.data): Provides totals and daily stats for likes, followers, following, videos, profile views, and follower growth, enabling users to monitor engagement trends.
+
+Video Data (video.list, video.data): Retrieves video details (ID, publish time, thumbnail, caption, links) and metrics such as views, reach, likes, comments, shares, saves, watch time, completion rate, and new followers. This supports video performance analysis and optimization.
+
+Audience Insights (user.insights): Used, where available, to analyze audience engagement and inform strategy.
