@@ -5,6 +5,7 @@ import (
     "net/http"
     "os"
     "time"
+    "path/filepath"
 
     "github.com/labstack/echo/v4"
     "github.com/labstack/echo/v4/middleware"
@@ -33,6 +34,17 @@ func main() {
 
     // Healthz
     e.GET("/healthz", func(c echo.Context) error { return c.String(http.StatusOK, "ok") })
+
+    // Terms of Service (read from contents/terms_of_service.txt)
+    e.GET("/terms-of-service", func(c echo.Context) error {
+        path := filepath.Join("contents", "terms_of_service.txt")
+        b, err := os.ReadFile(path)
+        if err != nil {
+            c.Logger().Errorf("failed to read terms: %v", err)
+            return c.String(http.StatusInternalServerError, "terms_of_service.txt not found")
+        }
+        return c.String(http.StatusOK, string(b))
+    })
 
     httpClient := &http.Client{Timeout: 10 * time.Second}
     client := &tiktok.Client{ClientKey: cfg.ClientKey, ClientSecret: cfg.ClientSecret, HTTP: httpClient}
@@ -82,7 +94,10 @@ const indexHTML = `<!doctype html>
       </div>
       <div class="links">
         <p>
-          エンドポイント: <code>GET /auth/login</code>, <code>GET /auth/callback</code>, <code>GET /healthz</code>
+          エンドポイント: <code>GET /auth/login</code>, <code>GET /auth/callback</code>, <code>GET /healthz</code>, <code>GET /terms-of-service</code>
+        </p>
+        <p>
+          利用規約は <a href="/terms-of-service">/terms-of-service</a> から確認できます。
         </p>
       </div>
     </div>
