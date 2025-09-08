@@ -1,7 +1,6 @@
 package main
 
 import (
-    "context"
     "net/http"
     "os"
     "time"
@@ -52,6 +51,17 @@ func main() {
         return c.String(http.StatusOK, string(b))
     })
 
+    // Privacy Policy (read from contents/privacy_policy.txt)
+    e.GET("/privacy-policy", func(c echo.Context) error {
+        path := filepath.Join("contents", "privacy_policy.txt")
+        b, err := os.ReadFile(path)
+        if err != nil {
+            c.Logger().Errorf("failed to read privacy policy: %v", err)
+            return c.String(http.StatusInternalServerError, "privacy_policy.txt not found")
+        }
+        return c.String(http.StatusOK, string(b))
+    })
+
     httpClient := &http.Client{Timeout: 10 * time.Second}
     client := &tiktok.Client{ClientKey: cfg.ClientKey, ClientSecret: cfg.ClientSecret, HTTP: httpClient}
     mem := &store.Memory{}
@@ -70,7 +80,3 @@ func main() {
         e.Logger.Fatalf("server error: %v", err)
     }
 }
-
-// silence unused import warnings for context in some environments
-var _ = context.Background
-
