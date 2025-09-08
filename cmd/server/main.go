@@ -62,6 +62,18 @@ func main() {
         return c.String(http.StatusOK, string(b))
     })
 
+    // TikTok sign file (read from contents/tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt)
+    e.GET("/tiktok/sign", func(c echo.Context) error {
+        path := filepath.Join("contents", "tiktokDuCt9uvj15AXrLAoL3qWkLlRKuD3sPbk.txt")
+        b, err := os.ReadFile(path)
+        if err != nil {
+            c.Logger().Errorf("failed to read tiktok sign file: %v", err)
+            return c.String(http.StatusInternalServerError, "tiktok sign file not found")
+        }
+        // return as plain text without modification
+        return c.Blob(http.StatusOK, "text/plain; charset=utf-8", b)
+    })
+
     httpClient := &http.Client{Timeout: 10 * time.Second}
     client := &tiktok.Client{ClientKey: cfg.ClientKey, ClientSecret: cfg.ClientSecret, HTTP: httpClient}
     mem := &store.Memory{}
