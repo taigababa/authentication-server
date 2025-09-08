@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OAuth Result</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 2rem; line-height: 1.6; }
+      .box { max-width: 820px; margin: 0 auto; padding: 1.25rem 1.5rem; border: 1px solid #ccc; border-radius: 12px; }
+      .row { display: flex; gap: 1rem; align-items: center; }
+      .avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid #aaa; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; word-break: break-all; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h1>認証結果</h1>
+      <div class="row">
+        {{if .AvatarURL}}
+        <img class="avatar" src="{{.AvatarURL}}" alt="avatar">
+        {{end}}
+        <div>
+          <div>表示名: <strong>{{.DisplayName}}</strong></div>
+        </div>
+      </div>
+      <h2>トークン</h2>
+      <div>access_token:</div>
+      <div class="mono">{{.AccessToken}}</div>
+      <div style="height: 0.5rem"></div>
+      <div>refresh_token:</div>
+      <div class="mono">{{.RefreshToken}}</div>
+      <p><a href="/">トップに戻る</a></p>
+    </div>
+  </body>
+</html>

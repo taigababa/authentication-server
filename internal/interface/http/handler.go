@@ -4,6 +4,10 @@ import (
     "crypto/rand"
     "encoding/hex"
     "net/http"
+    "strings"
+    "fmt"
+    "html/template"
+    "path/filepath"
 
     "github.com/labstack/echo/v4"
 
@@ -52,10 +56,40 @@ func (h *Handler) Callback(c echo.Context) error {
         })
     }
 
-    return c.JSON(http.StatusOK, map[string]any{
-        "token": tokenToMap(tok),
-        "user":  map[string]any{"data": user, "error": nil},
-    })
+    // If client explicitly requests JSON, keep existing JSON response
+    if strings.Contains(c.Request().Header.Get("Accept"), "application/json") || c.QueryParam("format") == "json" {
+        return c.JSON(http.StatusOK, map[string]any{
+            "token": tokenToMap(tok),
+            "user":  map[string]any{"data": user, "error": nil},
+        })
+    }
+
+    avatarURL, displayName := extractUserProfile(user)
+    // Render HTML using a template file under contents/callback.html
+    tplPath := filepath.Join("contents", "callback.html")
+    t, err := template.ParseFiles(tplPath)
+    if err != nil {
+        c.Logger().Errorf("failed to parse callback template: %v", err)
+        return c.String(http.StatusInternalServerError, "callback template not found")
+    }
+    data := struct {
+        AccessToken  string
+        RefreshToken string
+        AvatarURL    string
+        DisplayName  string
+    }{
+        AccessToken:  tok.AccessToken,
+        RefreshToken: tok.RefreshToken,
+        AvatarURL:    avatarURL,
+        DisplayName:  displayName,
+    }
+    c.Response().Header().Set(echo.HeaderContentType, "text/html; charset=utf-8")
+    c.Response().WriteHeader(http.StatusOK)
+    if err := t.Execute(c.Response().Writer, data); err != nil {
+        c.Logger().Errorf("failed to execute callback template: %v", err)
+        return c.String(http.StatusInternalServerError, "failed to render template")
+    }
+    return nil
 }
 
 func randomHex(n int) string {
@@ -78,3 +112,32 @@ func tokenToMap(t oauth.Token) map[string]any {
     }
 }
 
+// extractUserProfile attempts to pull avatar_url and display_name
+// from TikTok user info response structure.
+func extractUserProfile(m map[string]any) (avatarURL, displayName string) {
+    // Expected shapes:
+    // m = { "data": { "user": { "avatar_url": "", "display_name": "" } }, ... }
+    // or sometimes m = { "data": { "data": { "user": { ... } } } }
+    getStr := func(v any) string {
+        if v == nil { return "" }
+        if s, ok := v.(string); ok { return s }
+        return fmt.Sprint(v)
+    }
+    var data any
+    if v, ok := m["data"]; ok {
+        data = v
+    }
+    if dm, ok := data.(map[string]any); ok {
+        // direct user
+        if u, ok := dm["user"].(map[string]any); ok {
+            return getStr(u["avatar_url"]), getStr(u["display_name"])
+        }
+        // nested data.user
+        if inner, ok := dm["data"].(map[string]any); ok {
+            if u, ok := inner["user"].(map[string]any); ok {
+                return getStr(u["avatar_url"]), getStr(u["display_name"])
+            }
+        }
+    }
+    return "", ""
+}
