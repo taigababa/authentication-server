@@ -28,8 +28,58 @@ func main() {
     e.Logger = logging.NewSplitLogger()
     e.Logger.SetLevel(log.INFO)
     e.Use(middleware.Recover())
-    // Access logs to stdout explicitly
-    e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Output: os.Stdout}))
+    // Structured access logs to stdout; 5xx only go to stderr via Errorj
+    e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+        LogStatus:        true,
+        LogURI:           true,
+        LogMethod:        true,
+        LogRemoteIP:      true,
+        LogUserAgent:     true,
+        LogHost:          true,
+        LogLatency:       true,
+        LogRequestID:     true,
+        LogContentLength: true,
+        LogResponseSize:  true,
+        HandleError:      false,
+        LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+            // parse content-length to int when possible
+            var bytesIn int64
+            if v.ContentLength != "" {
+                // best-effort parse; ignore errors
+                for i := 0; i < len(v.ContentLength); i++ {
+                    if v.ContentLength[i] < '0' || v.ContentLength[i] > '9' {
+                        bytesIn = 0
+                        break
+                    }
+                }
+            }
+            m := log.JSON{
+                "id":            v.RequestID,
+                "remote_ip":     v.RemoteIP,
+                "host":          v.Host,
+                "method":        v.Method,
+                "uri":           v.URI,
+                "user_agent":    v.UserAgent,
+                "status":        v.Status,
+                "latency":       v.Latency.Nanoseconds(),
+                "latency_human": v.Latency.String(),
+                "bytes_in":      bytesIn,
+                "bytes_out":     v.ResponseSize,
+            }
+            if v.Status >= 400 {
+                m["level"] = "ERROR"
+                if v.Error != nil {
+                    m["error"] = v.Error.Error()
+                }
+                c.Logger().Errorj(m)
+            } else {
+                m["level"] = "INFO"
+                // Do not include error field for 4xx to avoid platform error classification
+                c.Logger().Infoj(m)
+            }
+            return nil
+        },
+    }))
 
     // Top page (read from contents/index.html)
     e.GET("/", func(c echo.Context) error {
