@@ -16,6 +16,7 @@ import (
     httpiface "tiktok-oauth/internal/interface/http"
     "tiktok-oauth/internal/infrastructure/store"
     "tiktok-oauth/internal/infrastructure/tiktok"
+    "tiktok-oauth/internal/pkg/logging"
 )
 
 func main() {
@@ -23,9 +24,12 @@ func main() {
 
     e := echo.New()
     e.HideBanner = true
+    // Split stdout/stderr: Info/Warn/Debug -> stdout, Error/Fatal/Panic -> stderr
+    e.Logger = logging.NewSplitLogger()
     e.Logger.SetLevel(log.INFO)
     e.Use(middleware.Recover())
-    e.Use(middleware.Logger())
+    // Access logs to stdout explicitly
+    e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Output: os.Stdout}))
 
     // Top page (read from contents/index.html)
     e.GET("/", func(c echo.Context) error {
