@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TikTok OAuth Demo</title>
+    <title>TikTok OAuth</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'">
     <style>
       :root { color-scheme: light dark; }
       body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 2rem; line-height: 1.6; }
@@ -17,20 +18,15 @@
   </head>
   <body>
     <div class="box">
-      <h1>TikTok OAuth Demo</h1>
-      <p>このサーバは TikTok OAuth v2 のサンプル実装です。</p>
+      <h1>TikTok OAuth</h1>
+      <p>本サービスへのログインを行います。TikTok アカウントを利用して認証します。</p>
       <div class="actions">
-        <a class="btn" href="/auth/login">Login with TikTok</a>
+        <a class="btn" href="/auth/login" aria-label="TikTok アカウントでログイン">TikTok でログイン</a>
       </div>
-      <div class="links">
-        <p>
-          エンドポイント: <code>GET /auth/login</code>, <code>GET /auth/callback</code>, <code>GET /healthz</code>, <code>GET /terms-of-service</code>, <code>GET /privacy-policy</code>
-        </p>
-        <p>
-          利用規約は <a href="/terms-of-service">/terms-of-service</a> から確認できます。
-        </p>
-        <p>
-          プライバシーポリシーは <a href="/privacy-policy">/privacy-policy</a> から確認できます。
+      <div class="links" aria-live="polite">
+        <p style="margin: 0.25rem 0 0.5rem;">
+          続行することで、<a href="/terms-of-service">利用規約</a>および
+          <a href="/privacy-policy">プライバシーポリシー</a>に同意したものとみなします。
         </p>
       </div>
     </div>
