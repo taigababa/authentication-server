@@ -173,40 +173,35 @@
         font-size: 0.85rem;
       }
 
-      .tokens {
+      .callout {
         display: grid;
-        gap: clamp(1.4rem, 3vw, 2rem);
+        gap: 1rem;
       }
 
-      .token {
-        position: relative;
-        padding: 1.4rem 1.4rem 1.2rem;
-        border-radius: 20px;
-        border: 1px solid rgba(15, 12, 35, 0.08);
-        background: rgba(255, 255, 255, 0.82);
-        box-shadow: 0 18px 44px rgba(15, 12, 35, 0.12);
+      .cta-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
       }
 
-      .token__label {
-        margin: 0 0 0.55rem;
-        font-size: 0.85rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: rgba(15, 12, 35, 0.6);
+      .cta-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7rem 1.4rem;
+        border-radius: 999px;
+        background: linear-gradient(120deg, var(--accent), var(--accent-alt));
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 240ms ease, box-shadow 240ms ease;
+        box-shadow: 0 14px 32px rgba(15, 12, 35, 0.25);
       }
 
-      .token__value {
-        margin: 0;
-        font-family: "JetBrains Mono", "SFMono-Regular", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 0.9rem;
-        word-break: break-all;
-        color: rgba(15, 12, 35, 0.86);
-      }
-
-      .token__meta {
-        margin-top: 0.75rem;
-        font-size: 0.8rem;
-        color: rgba(15, 12, 35, 0.58);
+      .cta-button:hover,
+      .cta-button:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 44px rgba(15, 12, 35, 0.32);
       }
 
       .card--note {
@@ -291,26 +286,28 @@
             </div>
           </section>
 
-          <section class="card tokens" aria-labelledby="tokens">
-            <h2 id="tokens" style="margin: 0 0 1.2rem; font-size: 1.35rem;">認証トークン</h2>
-            <article class="token">
-              <div class="token__label">ACCESS TOKEN</div>
-              <p class="token__value">{{.AccessToken}}</p>
-              <p class="token__meta">API リクエストで使用します。漏洩した場合は即時に revoke してください。</p>
-            </article>
-            <article class="token">
-              <div class="token__label">REFRESH TOKEN</div>
-              <p class="token__value">{{.RefreshToken}}</p>
-              <p class="token__meta">長期的な再認証に利用します。安全なストレージで暗号化して保管しましょう。</p>
-            </article>
+          <section class="card callout" aria-labelledby="callback-status">
+            <h2 id="callback-status">認証が完了しました</h2>
+            <p style="margin: 0;">
+              TikTok OAuth フローが正常に終了しました。アクセストークンとリフレッシュトークンはサーバー側で安全に保持し、
+              次のリクエストで利用できる状態になっています。
+            </p>
+            <p style="margin: 0;">
+              このまま分析ダッシュボードへ進むと、保存済みのトークンを使って動画インサイトを取得します。
+            </p>
+            <div class="cta-group">
+              <a class="cta-button" href="/insights" aria-label="TikTok 動画インサイトダッシュボードへ進む">ダッシュボードへ進む</a>
+              <a class="back-link" href="/" aria-label="トップに戻る">トップに戻る</a>
+            </div>
           </section>
 
           <section class="card card--note" aria-labelledby="next">
             <h2 class="note__title" id="next">次にやること</h2>
             <ul class="note__list">
-              <li>バックエンドでトークンを暗号化し、保存先を決定する。</li>
-              <li>TikTok API を用いて動画インサイトを取得し、分析ダッシュボードへ連携する。</li>
-              <li>不要になったトークンは <code>/oauth/revoke</code> 等で失効処理を行う。</li>
+              <li>バックエンドで取得したトークンを暗号化し、セッション/データストアに保存する。</li>
+              <li>専用ページ（例: <code>/insights</code>）でサーバーサイドから TikTok API を呼び出し動画データを取得する。</li>
+              <li>ダッシュボードで 401 応答を検知した場合はリフレッシュ → 再ログインを促すフローを実装する。</li>
+              <li>不要になったトークンは <code>/oauth/revoke</code> などで失効処理を行う。</li>
             </ul>
             <div class="actions">
               <a class="back-link" href="/" aria-label="トップに戻る">
@@ -321,5 +318,6 @@
         </div>
       </main>
     </div>
+    
   </body>
 </html>

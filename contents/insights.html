@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TikTok Insights Dashboard</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg-light: #f4f6ff;
+        --bg-dark: #0a0b1e;
+        --panel-bg: rgba(255, 255, 255, 0.78);
+        --panel-border: rgba(255, 255, 255, 0.55);
+        --panel-shadow: 0 28px 60px rgba(18, 16, 48, 0.16);
+        --text-body: #1c1b29;
+        --text-muted: #6b6882;
+        --accent: #ff0050;
+        --accent-alt: #00f2ea;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-light: #060510;
+          --bg-dark: #030307;
+          --panel-bg: rgba(14, 14, 28, 0.82);
+          --panel-border: rgba(255, 255, 255, 0.12);
+          --panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+          --text-body: #f5f4ff;
+          --text-muted: #a7a4bf;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.7;
+        min-height: 100vh;
+        color: var(--text-body);
+        background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        padding: clamp(2.75rem, 6vw, 5.5rem) clamp(1.5rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 3rem);
+      }
+
+      .hero {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .hero__badge {
+        display: inline-flex;
+        gap: 0.6rem;
+        align-items: center;
+        padding: 0.5rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid var(--panel-border);
+        backdrop-filter: blur(14px);
+        background: rgba(255, 255, 255, 0.16);
+        font-weight: 600;
+      }
+
+      .hero__badge-dot {
+        width: 0.55rem;
+        height: 0.55rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(255, 0, 80, 0.22);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2.4rem, 4.2vw, 3.4rem);
+        letter-spacing: -0.01em;
+      }
+
+      .hero__lead {
+        margin: 0;
+        max-width: 680px;
+        color: var(--text-muted);
+        font-size: 1rem;
+      }
+
+      .hero__actions {
+        display: inline-flex;
+        gap: 0.9rem;
+        align-items: center;
+      }
+
+      .hero__note {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .hero__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.7rem 1.5rem;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        background: linear-gradient(120deg, var(--accent), var(--accent-alt));
+        color: #ffffff;
+        box-shadow: 0 16px 40px rgba(18, 16, 48, 0.25);
+        transition: transform 220ms ease, box-shadow 220ms ease;
+      }
+
+      .hero__link:hover,
+      .hero__link:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 50px rgba(18, 16, 48, 0.32);
+      }
+
+      main {
+        padding: 0 clamp(1.5rem, 6vw, 5.5rem) clamp(4rem, 6vw, 5.5rem);
+        flex: 1;
+      }
+
+      .layout {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        gap: clamp(2rem, 4vw, 3rem);
+      }
+
+      .panel {
+        border-radius: 30px;
+        border: 1px solid var(--panel-border);
+        background: var(--panel-bg);
+        box-shadow: var(--panel-shadow);
+        backdrop-filter: blur(24px);
+        padding: clamp(2.2rem, 5vw, 3rem);
+      }
+
+      .panel--table {
+        overflow: hidden;
+        padding: clamp(1.6rem, 4vw, 2.4rem);
+        background: rgba(18, 16, 48, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 24px 60px rgba(5, 4, 18, 0.55);
+      }
+
+      .insights-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: clamp(1.4rem, 3vw, 2rem);
+      }
+
+      .insights-header h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+      }
+
+      .insights-header__meta {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .panel--table .insights-header h2 {
+        color: #f8f7ff;
+      }
+
+      .panel--table .insights-header__meta {
+        color: rgba(248, 247, 255, 0.72);
+      }
+
+      .panel--table .insights-header__meta code {
+        background: rgba(248, 247, 255, 0.16);
+        color: #ffffff;
+      }
+
+      .insights-header__meta code {
+        background: rgba(18, 16, 48, 0.1);
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+      }
+
+      .insights-grid {
+        display: grid;
+        gap: clamp(1.4rem, 2.5vw, 2rem);
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .video-card {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(18, 16, 48, 0.08);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 22px 48px rgba(18, 16, 48, 0.12);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .video-card__thumb {
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        object-fit: cover;
+      }
+
+      .video-card__body {
+        padding: 1.1rem 1.4rem 1.4rem;
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .video-card__title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .video-card__meta {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .stat-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .stat-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        background: rgba(18, 16, 48, 0.08);
+        color: rgba(18, 16, 48, 0.75);
+      }
+
+      .stat-chip__label {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .video-card__id {
+        margin: 0;
+        font-family: "JetBrains Mono", "SFMono-Regular", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.82rem;
+        color: rgba(18, 16, 48, 0.58);
+        word-break: break-all;
+      }
+
+      .empty-state {
+        margin: 0;
+        padding: 1.2rem;
+        border-radius: 16px;
+        background: rgba(18, 16, 48, 0.06);
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+        background: transparent;
+      }
+
+      thead th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(248, 247, 255, 0.85);
+        background: rgba(248, 247, 255, 0.08);
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(248, 247, 255, 0.18);
+        color: rgba(248, 247, 255, 0.92);
+        background: rgba(248, 247, 255, 0.04);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .metrics-numeric {
+        font-family: "JetBrains Mono", "SFMono-Regular", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.88rem;
+        color: rgba(248, 247, 255, 0.92);
+      }
+
+      .metrics-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        object-fit: cover;
+      }
+
+      .table-caption {
+        margin: 0.6rem 0 0;
+        font-size: 0.85rem;
+        color: rgba(248, 247, 255, 0.65);
+      }
+
+      .table-placeholder {
+        padding: 1rem;
+        text-align: center;
+        color: rgba(248, 247, 255, 0.72);
+      }
+
+      footer {
+        padding: clamp(1.2rem, 3vw, 1.8rem) clamp(1.5rem, 6vw, 5.5rem) clamp(2rem, 4vw, 3rem);
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      footer a {
+        color: inherit;
+      }
+
+      footer a:hover,
+      footer a:focus-visible {
+        color: var(--accent);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="hero">
+        <span class="hero__badge">
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+          TikTok Insights
+        </span>
+        <h1>動画インサイトで運用の勝ち筋を見つける。</h1>
+        <p class="hero__lead">
+          直近の投稿パフォーマンスを俯瞰し、再生数やエンゲージメントのトレンドを素早く把握できます。
+          フィードバックループを短縮し、次のコンテンツ戦略へ活かしましょう。
+        </p>
+        <div class="hero__actions">
+          <a class="hero__link" href="/">認証ポータルに戻る</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="layout">
+        <section class="panel" aria-labelledby="insights-list-title">
+          <div class="insights-header">
+            <h2 id="insights-list-title">投稿動画一覧</h2>
+          </div>
+          <div class="insights-grid" id="insights-grid" aria-live="polite"></div>
+          <p class="empty-state" id="insights-empty">動画データを読み込んでいます…</p>
+        </section>
+
+        <section class="panel panel--table" aria-labelledby="insights-table-title">
+          <div class="insights-header" style="margin-bottom: 1rem;">
+            <h2 id="insights-table-title">動画パフォーマンス表</h2>
+          </div>
+          <div class="table-wrapper">
+            <table aria-describedby="insights-table-title insights-table-caption">
+              <thead>
+                <tr>
+                  <th scope="col">サムネイル</th>
+                  <th scope="col">タイトル</th>
+                  <th scope="col">再生時間</th>
+                  <th scope="col">再生数</th>
+                  <th scope="col">いいね数</th>
+                  <th scope="col">コメント数</th>
+                  <th scope="col">シェア数</th>
+                </tr>
+              </thead>
+              <tbody id="insights-table-body">
+                <tr>
+                  <td class="table-placeholder" colspan="7">
+                    動画データを読み込んでいます…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="table-caption" id="insights-table-caption">
+              取得した投稿動画ごとのサマリーデータです。再生数とエンゲージメント指標の比較に活用できます。
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      &copy; 2025 株式会社湘南YOLO's. All Rights Reserved.
+    </footer>
+
+    <script>
+      (function () {
+        const grid = document.getElementById("insights-grid");
+        const emptyEl = document.getElementById("insights-empty");
+        const tableBody = document.getElementById("insights-table-body");
+
+        if (!grid || !emptyEl || !tableBody) {
+          return;
+        }
+
+        const numberFormatter = new Intl.NumberFormat("ja-JP");
+        const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        });
+
+        const formatNumber = (value) => {
+          const numeric = Number(value);
+          if (!Number.isFinite(numeric)) {
+            return "–";
+          }
+          return numberFormatter.format(numeric);
+        };
+
+        const formatDate = (unixSeconds) => {
+          if (!unixSeconds) {
+            return "日時不明";
+          }
+          const date = new Date(Number(unixSeconds) * 1000);
+          if (Number.isNaN(date.getTime())) {
+            return "日時不明";
+          }
+          return dateFormatter.format(date);
+        };
+
+        const createStatChip = (label, value) => {
+          const chip = document.createElement("span");
+          chip.className = "stat-chip";
+
+          const labelEl = document.createElement("span");
+          labelEl.className = "stat-chip__label";
+          labelEl.textContent = label;
+
+          const valueEl = document.createElement("span");
+          valueEl.textContent = value;
+
+          chip.appendChild(labelEl);
+          chip.appendChild(valueEl);
+          return chip;
+        };
+
+        const placeholders = [
+          "/docs/response_samples/images/placeholder-01.png",
+          "/docs/response_samples/images/placeholder-02.png",
+          "/docs/response_samples/images/placeholder-03.png"
+        ];
+
+        const getPlaceholder = (index) => placeholders[index % placeholders.length];
+
+        const renderVideos = (videos) => {
+          grid.innerHTML = "";
+          tableBody.innerHTML = "";
+
+          if (!Array.isArray(videos) || videos.length === 0) {
+            emptyEl.textContent = "動画データが存在しません。";
+            emptyEl.hidden = false;
+
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.colSpan = 7;
+            cell.className = "table-placeholder";
+            cell.textContent = "動画データが存在しません。";
+            row.appendChild(cell);
+            tableBody.appendChild(row);
+            return;
+          }
+
+          emptyEl.hidden = true;
+
+          videos.forEach((video, index) => {
+            const card = document.createElement("article");
+            card.className = "video-card";
+
+            const thumb = document.createElement("img");
+            thumb.className = "video-card__thumb";
+            thumb.src = getPlaceholder(index);
+            thumb.alt = video.title ? `${video.title} のサムネイル` : "動画サムネイル";
+            card.appendChild(thumb);
+
+            const body = document.createElement("div");
+            body.className = "video-card__body";
+
+            const title = document.createElement("h3");
+            title.className = "video-card__title";
+            title.textContent = video.title || "タイトル未設定";
+            body.appendChild(title);
+
+            const meta = document.createElement("p");
+            meta.className = "video-card__meta";
+            const duration = Number(video.duration);
+            const durationText = Number.isFinite(duration) ? `${duration}秒` : "秒数不明";
+            meta.textContent = [durationText, formatDate(video.create_time)].join(" ・ ");
+            body.appendChild(meta);
+
+            const statList = document.createElement("div");
+            statList.className = "stat-list";
+            statList.appendChild(createStatChip("Views", formatNumber(video.view_count)));
+            statList.appendChild(createStatChip("Likes", formatNumber(video.like_count)));
+            statList.appendChild(createStatChip("Comments", formatNumber(video.comment_count)));
+            statList.appendChild(createStatChip("Shares", formatNumber(video.share_count)));
+            body.appendChild(statList);
+
+            const id = document.createElement("p");
+            id.className = "video-card__id";
+            id.textContent = video.id ? `ID: ${video.id}` : "ID: (不明)";
+            body.appendChild(id);
+
+            card.appendChild(body);
+            grid.appendChild(card);
+
+            const row = document.createElement("tr");
+
+            const thumbCell = document.createElement("td");
+            const thumbImg = document.createElement("img");
+            thumbImg.className = "metrics-thumb";
+            thumbImg.src = getPlaceholder(index);
+            thumbImg.alt = video.title ? `${video.title} のサムネイル` : "動画サムネイル";
+            thumbCell.appendChild(thumbImg);
+            row.appendChild(thumbCell);
+
+            const titleCell = document.createElement("td");
+            titleCell.textContent = video.title || "タイトル未設定";
+            row.appendChild(titleCell);
+
+            const durationCell = document.createElement("td");
+            durationCell.textContent = Number.isFinite(Number(video.duration))
+              ? `${Number(video.duration)}秒`
+              : "秒数不明";
+            row.appendChild(durationCell);
+
+            const viewsCell = document.createElement("td");
+            viewsCell.className = "metrics-numeric";
+            viewsCell.textContent = formatNumber(video.view_count);
+            row.appendChild(viewsCell);
+
+            const likesCell = document.createElement("td");
+            likesCell.className = "metrics-numeric";
+            likesCell.textContent = formatNumber(video.like_count);
+            row.appendChild(likesCell);
+
+            const commentsCell = document.createElement("td");
+            commentsCell.className = "metrics-numeric";
+            commentsCell.textContent = formatNumber(video.comment_count);
+            row.appendChild(commentsCell);
+
+            const sharesCell = document.createElement("td");
+            sharesCell.className = "metrics-numeric";
+            sharesCell.textContent = formatNumber(video.share_count);
+            row.appendChild(sharesCell);
+
+            tableBody.appendChild(row);
+          });
+        };
+
+        const handleError = (message) => {
+          emptyEl.textContent = message;
+          emptyEl.hidden = false;
+
+          tableBody.innerHTML = "";
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 7;
+          cell.className = "table-placeholder";
+          cell.textContent = message;
+          row.appendChild(cell);
+          tableBody.appendChild(row);
+        };
+
+        fetch("/docs/response_samples/mock_tiktok_videos.json", {
+          headers: { Accept: "application/json" }
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((payload) => {
+            const videos = payload && payload.data && payload.data.videos;
+            renderVideos(videos);
+          })
+          .catch((error) => {
+            console.error("Failed to load insights mock data:", error);
+            handleError("インサイトの読み込みに失敗しました。しばらく待ってから再度お試しください。");
+          });
+      })();
+    </script>
+  </body>
+</html>
