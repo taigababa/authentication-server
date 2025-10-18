@@ -173,6 +173,86 @@
         font-size: 0.85rem;
       }
 
+      .tokens-card {
+        display: grid;
+        gap: 1.2rem;
+      }
+
+      .tokens-card__header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .tokens-card__header h2 {
+        margin: 0;
+        font-size: 1.35rem;
+      }
+
+      .tokens-note {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .tokens {
+        display: grid;
+        gap: clamp(1.4rem, 3vw, 2rem);
+      }
+
+      .token {
+        position: relative;
+        padding: 1.4rem 1.4rem 1.2rem;
+        border-radius: 20px;
+        border: 1px solid rgba(15, 12, 35, 0.08);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 18px 44px rgba(15, 12, 35, 0.12);
+      }
+
+      .token__label {
+        margin: 0 0 0.55rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(15, 12, 35, 0.6);
+      }
+
+      .token__value {
+        margin: 0;
+        font-family: "JetBrains Mono", "SFMono-Regular", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.9rem;
+        word-break: break-all;
+        color: rgba(15, 12, 35, 0.86);
+      }
+
+      .token__meta {
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+        color: rgba(15, 12, 35, 0.58);
+      }
+
+      .tokens-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 12, 35, 0.18);
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--body);
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 200ms ease, box-shadow 200ms ease;
+      }
+
+      .tokens-toggle:hover,
+      .tokens-toggle:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 28px rgba(15, 12, 35, 0.14);
+      }
+
       .callout {
         display: grid;
         gap: 1rem;
@@ -286,6 +366,31 @@
             </div>
           </section>
 
+          <section class="card tokens-card" aria-labelledby="tokens-title">
+            <div class="tokens-card__header">
+              <h2 id="tokens-title">発行されたトークン</h2>
+              <button type="button" class="tokens-toggle" id="tokens-toggle" aria-expanded="false" aria-controls="tokens-content">
+                トークン情報を表示
+              </button>
+            </div>
+            <p class="tokens-note">
+              TikTok API との通信に使用するアクセストークンとリフレッシュトークンです。サーバー側で暗号化して保存していますが、
+              表示内容はコピー後速やかに非表示へ戻すことを推奨します。
+            </p>
+            <div class="tokens" id="tokens-content" hidden>
+              <article class="token">
+                <div class="token__label">ACCESS TOKEN</div>
+                <p class="token__value">{{.AccessToken}}</p>
+                <p class="token__meta">API リクエストに利用します。漏洩した場合は即座に失効処理を実施してください。</p>
+              </article>
+              <article class="token">
+                <div class="token__label">REFRESH TOKEN</div>
+                <p class="token__value">{{.RefreshToken}}</p>
+                <p class="token__meta">長期的なトークン更新に利用します。安全なストレージで保管し、不要時は無効化してください。</p>
+              </article>
+            </div>
+          </section>
+
           <section class="card callout" aria-labelledby="callback-status">
             <h2 id="callback-status">認証が完了しました</h2>
             <p style="margin: 0;">
@@ -315,9 +420,27 @@
               </a>
             </div>
           </section>
+
         </div>
       </main>
     </div>
-    
+    <script>
+      (function () {
+        const toggle = document.getElementById("tokens-toggle");
+        const container = document.getElementById("tokens-content");
+        if (!toggle || !container) {
+          return;
+        }
+        const expandLabel = "トークン情報を表示";
+        const collapseLabel = "トークン情報を隠す";
+
+        toggle.addEventListener("click", () => {
+          const expanded = toggle.getAttribute("aria-expanded") === "true";
+          toggle.setAttribute("aria-expanded", String(!expanded));
+          container.hidden = expanded;
+          toggle.textContent = expanded ? expandLabel : collapseLabel;
+        });
+      })();
+    </script>
   </body>
 </html>
