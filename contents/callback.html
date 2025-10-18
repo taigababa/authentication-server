@@ -229,6 +229,159 @@
         line-height: 1.7;
       }
 
+      .insights {
+        display: grid;
+        gap: 1.2rem;
+      }
+
+      .insights__header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .insights__header h2 {
+        margin: 0;
+        font-size: 1.35rem;
+      }
+
+      .insights__meta {
+        font-size: 0.85rem;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .insights__meta code {
+        background: rgba(15, 12, 35, 0.08);
+        padding: 0.1rem 0.4rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+      }
+
+      .insights__grid {
+        display: grid;
+        gap: 1.4rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .video-card {
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid rgba(15, 12, 35, 0.08);
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 18px 40px rgba(15, 12, 35, 0.12);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .video-card__thumb {
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        object-fit: cover;
+      }
+
+      .video-card__body {
+        padding: 1rem 1.2rem 1.2rem;
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .video-card__title {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .video-card__id {
+        margin: 0;
+        font-family: "JetBrains Mono", "SFMono-Regular", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.8rem;
+        color: rgba(15, 12, 35, 0.58);
+        word-break: break-all;
+      }
+
+      .video-card__meta {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .video-card__stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.35rem;
+      }
+
+      .stat-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        background: rgba(15, 12, 35, 0.08);
+        color: rgba(15, 12, 35, 0.7);
+      }
+
+      .stat-chip__label {
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+
+      .insights__empty {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .table-section {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .metrics-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.93rem;
+      }
+
+      .metrics-table th,
+      .metrics-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(15, 12, 35, 0.08);
+        color: rgba(15, 12, 35, 0.82);
+      }
+
+      .metrics-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .metrics-table th {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(15, 12, 35, 0.7);
+        background: rgba(15, 12, 35, 0.06);
+      }
+
+      .metrics-table__numeric {
+        font-family: "JetBrains Mono", "SFMono-Regular", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.88rem;
+      }
+
+      .metrics-table__thumb {
+        width: 54px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+
       .actions {
         margin-top: 1.6rem;
       }
@@ -305,6 +458,45 @@
             </article>
           </section>
 
+          <section class="card insights" aria-labelledby="insights-detailed-title">
+            <div class="insights__header">
+              <h2 id="insights-detailed-title">投稿動画一覧</h2>
+            </div>
+            <div class="insights__grid" id="insights-detailed-grid" aria-live="polite"></div>
+            <p class="insights__empty" id="insights-detailed-empty">データを取得しています…</p>
+          </section>
+
+          <section class="card table-section" aria-labelledby="insights-table-title">
+            <div class="insights__header">
+              <h2 id="insights-table-title">動画パフォーマンス表</h2>
+            </div>
+            <div class="table-wrapper" style="overflow-x: auto;">
+              <table class="metrics-table" aria-describedby="insights-table-title insights-table-caption">
+                <thead>
+                  <tr>
+                    <th scope="col">サムネイル</th>
+                    <th scope="col">タイトル</th>
+                    <th scope="col">再生時間</th>
+                    <th scope="col">再生数</th>
+                    <th scope="col">いいね数</th>
+                    <th scope="col">コメント数</th>
+                    <th scope="col">シェア数</th>
+                  </tr>
+                </thead>
+                <tbody id="insights-table-body">
+                  <tr>
+                    <td colspan="7" style="padding: 1rem; text-align: center; color: var(--muted);">
+                      データを読み込んでいます…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p id="insights-table-caption" style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--muted);">
+                取得した投稿動画ごとのサマリーデータです。再生数・エンゲージメントの比較に役立ちます。
+              </p>
+            </div>
+          </section>
+
           <section class="card card--note" aria-labelledby="next">
             <h2 class="note__title" id="next">次にやること</h2>
             <ul class="note__list">
@@ -321,5 +513,206 @@
         </div>
       </main>
     </div>
+    <script>
+      (function () {
+        const detailedGrid = document.getElementById("insights-detailed-grid");
+        const detailedEmpty = document.getElementById("insights-detailed-empty");
+        const tableBody = document.getElementById("insights-table-body");
+
+        if (!detailedGrid || !detailedEmpty || !tableBody) {
+          return;
+        }
+
+        const numberFormatter = new Intl.NumberFormat("ja-JP");
+        const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        });
+
+        const formatNumber = (value) => {
+          const numeric = Number(value);
+          if (!Number.isFinite(numeric)) {
+            return "–";
+          }
+          return numberFormatter.format(numeric);
+        };
+
+        const formatDate = (unixSeconds) => {
+          if (!unixSeconds) {
+            return "日時不明";
+          }
+          const date = new Date(Number(unixSeconds) * 1000);
+          if (Number.isNaN(date.getTime())) {
+            return "日時不明";
+          }
+          return dateFormatter.format(date);
+        };
+
+        const createStatChip = (label, value) => {
+          const chip = document.createElement("span");
+          chip.className = "stat-chip";
+
+          const strong = document.createElement("span");
+          strong.className = "stat-chip__label";
+          strong.textContent = label;
+
+          const span = document.createElement("span");
+          span.textContent = value;
+
+          chip.appendChild(strong);
+          chip.appendChild(span);
+          return chip;
+        };
+
+        const placeholders = [
+          "/docs/responce_samples/images/placeholder-01.png",
+          "/docs/responce_samples/images/placeholder-02.png",
+          "/docs/responce_samples/images/placeholder-03.png"
+        ];
+
+        const getPlaceholder = (index) => {
+          if (placeholders.length === 0) {
+            return "";
+          }
+          return placeholders[index % placeholders.length];
+        };
+
+        const renderDetailedVideos = (videos) => {
+          detailedGrid.innerHTML = "";
+          tableBody.innerHTML = "";
+
+          if (!Array.isArray(videos) || videos.length === 0) {
+            detailedEmpty.textContent = "動画インサイトが見つかりませんでした。";
+            detailedEmpty.hidden = false;
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.colSpan = 7;
+            cell.style.padding = "1rem";
+            cell.style.textAlign = "center";
+            cell.style.color = "var(--muted)";
+            cell.textContent = "動画データが存在しません。";
+            row.appendChild(cell);
+            tableBody.appendChild(row);
+            return;
+          }
+
+          detailedEmpty.hidden = true;
+
+          videos.forEach((video, index) => {
+            const card = document.createElement("article");
+            card.className = "video-card";
+
+            const img = document.createElement("img");
+            img.className = "video-card__thumb";
+            img.src = getPlaceholder(index);
+            img.alt = video.title ? video.title + " のサムネイル" : "動画サムネイル";
+            card.appendChild(img);
+
+            const body = document.createElement("div");
+            body.className = "video-card__body";
+
+            const title = document.createElement("h3");
+            title.className = "video-card__title";
+            title.textContent = video.title || "タイトル未設定";
+            body.appendChild(title);
+
+            const meta = document.createElement("p");
+            meta.className = "video-card__meta";
+            const duration = Number(video.duration);
+            const durationText = Number.isFinite(duration) ? `${duration}秒` : "秒数不明";
+            meta.textContent = [durationText, formatDate(video.create_time)].join(" ・ ");
+            body.appendChild(meta);
+
+            const stats = document.createElement("div");
+            stats.className = "video-card__stats";
+            stats.appendChild(createStatChip("Views", formatNumber(video.view_count)));
+            stats.appendChild(createStatChip("Likes", formatNumber(video.like_count)));
+            stats.appendChild(createStatChip("Comments", formatNumber(video.comment_count)));
+            stats.appendChild(createStatChip("Shares", formatNumber(video.share_count)));
+            body.appendChild(stats);
+
+            const id = document.createElement("p");
+            id.className = "video-card__id";
+            id.textContent = video.id ? "ID: " + video.id : "ID: (不明)";
+            body.appendChild(id);
+
+            card.appendChild(body);
+            detailedGrid.appendChild(card);
+
+            const row = document.createElement("tr");
+
+            const thumbCell = document.createElement("td");
+            const thumbImg = document.createElement("img");
+            thumbImg.className = "metrics-table__thumb";
+            thumbImg.src = getPlaceholder(index);
+            thumbImg.alt = video.title ? video.title + " のサムネイル" : "動画サムネイル";
+            thumbCell.appendChild(thumbImg);
+            row.appendChild(thumbCell);
+
+            const titleCell = document.createElement("td");
+            titleCell.textContent = video.title || "タイトル未設定";
+            row.appendChild(titleCell);
+
+            const durationCell = document.createElement("td");
+            durationCell.textContent = Number.isFinite(Number(video.duration))
+              ? `${Number(video.duration)}秒`
+              : "秒数不明";
+            row.appendChild(durationCell);
+
+            const viewsCell = document.createElement("td");
+            viewsCell.className = "metrics-table__numeric";
+            viewsCell.textContent = formatNumber(video.view_count);
+            row.appendChild(viewsCell);
+
+            const likesCell = document.createElement("td");
+            likesCell.className = "metrics-table__numeric";
+            likesCell.textContent = formatNumber(video.like_count);
+            row.appendChild(likesCell);
+
+            const commentsCell = document.createElement("td");
+            commentsCell.className = "metrics-table__numeric";
+            commentsCell.textContent = formatNumber(video.comment_count);
+            row.appendChild(commentsCell);
+
+            const shareCell = document.createElement("td");
+            shareCell.className = "metrics-table__numeric";
+            shareCell.textContent = formatNumber(video.share_count);
+            row.appendChild(shareCell);
+
+            tableBody.appendChild(row);
+          });
+        };
+
+        const handleDetailedError = (message) => {
+          detailedEmpty.textContent = message;
+          detailedEmpty.hidden = false;
+        };
+
+        const fetchJson = (path, onSuccess, onError) => {
+          fetch(path, { headers: { Accept: "application/json" } })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+              }
+              return response.json();
+            })
+            .then(onSuccess)
+            .catch((error) => {
+              console.error("Failed to load mock data:", error);
+              onError("データの読み込みに失敗しました。時間をおいて再度お試しください。");
+            });
+        };
+
+        fetchJson(
+          "/docs/responce_samples/mock_tiktok_videos.json",
+          (payload) => {
+            const videos = payload && payload.data && payload.data.videos;
+            renderDetailedVideos(videos);
+          },
+          handleDetailedError
+        );
+      })();
+    </script>
   </body>
 </html>

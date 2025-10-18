@@ -1,0 +1,61 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "7234568030997662933",
+        "create_time": 1728896400,
+        "cover_image_url": "https://p16-sign-va.tiktokcdn.com/obj/tos-maliva-p-0068/abcd1234efgh5678ijkl.jpg",
+        "share_url": "https://www.tiktok.com/@user1/video/7234568030997662933",
+        "video_description": "Trying out the new dance trend! 💃🔥",
+        "duration": 27,
+        "height": 1920,
+        "width": 1080,
+        "title": "Dance Challenge 2025",
+        "embed_html": "<blockquote class='tiktok-embed' cite='https://www.tiktok.com/@user1/video/7234568030997662933' data-video-id='7234568030997662933'><section></section></blockquote><script async src='https://www.tiktok.com/embed.js'></script>",
+        "embed_link": "https://www.tiktok.com/embed/7234568030997662933",
+        "like_count": 15420,
+        "comment_count": 893,
+        "share_count": 245,
+        "view_count": 382104
+      },
+      {
+        "id": "7234580793298373833",
+        "create_time": 1728800000,
+        "cover_image_url": "https://p16-sign-va.tiktokcdn.com/obj/tos-maliva-p-0068/wxyz9876mnop4321qrst.jpg",
+        "share_url": "https://www.tiktok.com/@user2/video/7234580793298373833",
+        "video_description": "Easy 10-minute breakfast recipe 🥞☕️",
+        "duration": 45,
+        "height": 1280,
+        "width": 720,
+        "title": "Simple Pancake Tutorial",
+        "embed_html": "<blockquote class='tiktok-embed' cite='https://www.tiktok.com/@user2/video/7234580793298373833' data-video-id='7234580793298373833'><section></section></blockquote><script async src='https://www.tiktok.com/embed.js'></script>",
+        "embed_link": "https://www.tiktok.com/embed/7234580793298373833",
+        "like_count": 8421,
+        "comment_count": 312,
+        "share_count": 190,
+        "view_count": 254672
+      },
+      {
+        "id": "7234591231128470100",
+        "create_time": 1728700000,
+        "cover_image_url": "https://p16-sign-va.tiktokcdn.com/obj/tos-maliva-p-0068/qwer5678tyui1234zxcv.jpg",
+        "share_url": "https://www.tiktok.com/@user3/video/7234591231128470100",
+        "video_description": "Creative studio walkthrough with lighting tips 💡🎥",
+        "duration": 60,
+        "height": 1920,
+        "width": 1080,
+        "title": "Studio Lighting Workflow",
+        "embed_html": "<blockquote class='tiktok-embed' cite='https://www.tiktok.com/@user3/video/7234591231128470100' data-video-id='7234591231128470100'><section></section></blockquote><script async src='https://www.tiktok.com/embed.js'></script>",
+        "embed_link": "https://www.tiktok.com/embed/7234591231128470100",
+        "like_count": 27500,
+        "comment_count": 1021,
+        "share_count": 540,
+        "view_count": 612893
+      }
+    ]
+  },
+  "error": {
+    "code": 0,
+    "message": ""
+  }
+}
