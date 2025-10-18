@@ -11,68 +11,611 @@
     <style>
       :root {
         color-scheme: light dark;
+        --bg-light: #f4f6fb;
+        --bg-dark: #0f0c1f;
+        --card-bg: rgba(255, 255, 255, 0.65);
+        --card-border: rgba(255, 255, 255, 0.6);
+        --card-shadow: 0 24px 60px rgba(20, 16, 40, 0.18);
+        --text-body: #1d1c23;
+        --text-muted: #55525f;
+        --primary: #0e0f23;
+        --accent: #ff0050;
+        --accent-alt: #00f2ea;
       }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-light: #070612;
+          --bg-dark: #000;
+          --card-bg: rgba(14, 14, 28, 0.75);
+          --card-border: rgba(255, 255, 255, 0.08);
+          --text-body: #f2f1f6;
+          --text-muted: #b3b0c0;
+          --primary: #ffffff;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica,
-          Arial, sans-serif;
-        margin: 2rem;
-        line-height: 1.6;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        line-height: 1.7;
+        color: var(--text-body);
+        background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
-      .box {
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 1.25rem 1.5rem;
-        border: 1px solid #ccc;
-        border-radius: 12px;
+
+      .page {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
-      h1 {
-        margin-top: 0;
-        font-size: 1.6rem;
+
+      .hero {
+        position: relative;
+        padding: clamp(2.5rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 6rem);
+        overflow: hidden;
       }
-      .actions {
-        margin-top: 1rem;
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 12% -10% -15% 40%;
+        background: linear-gradient(135deg, rgba(255, 0, 80, 0.32), rgba(0, 242, 234, 0.18));
+        filter: blur(80px);
+        z-index: 0;
       }
-      .btn {
-        display: inline-block;
-        background: #000;
-        color: #fff;
-        text-decoration: none;
-        padding: 0.65rem 1rem;
-        border-radius: 8px;
+
+      .hero__layout {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: clamp(2rem, 6vw, 4rem);
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        align-items: center;
+      }
+
+      .hero__content {
+        max-width: 520px;
+      }
+
+      .hero__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.16);
+        color: var(--primary);
+        font-size: 0.9rem;
         font-weight: 600;
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--card-border);
       }
-      .links {
-        margin-top: 0.75rem;
-        font-size: 0.95rem;
+
+      .hero__badge-dot {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgba(255, 0, 80, 0.2);
       }
+
+      h1 {
+        margin: 1.5rem 0 1rem;
+        font-size: clamp(2.1rem, 4vw, 3.1rem);
+        letter-spacing: -0.01em;
+      }
+
+      .hero__headline-line {
+        display: block;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 640px) {
+        .hero__headline-line {
+          white-space: normal;
+        }
+      }
+
+      .hero__lead {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        margin: 0 0 1.75rem;
+      }
+
+      .hero__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+        align-items: center;
+      }
+
+      .btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        border-radius: 999px;
+        padding: 0.75rem 1.6rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 260ms ease, box-shadow 260ms ease, background 260ms ease;
+        will-change: transform;
+      }
+
+      .btn svg {
+        width: 1.1rem;
+        height: 1.1rem;
+      }
+
+      .btn--primary {
+        background: linear-gradient(120deg, var(--accent), var(--accent-alt));
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(18, 20, 44, 0.25);
+      }
+
+      .btn--secondary {
+        color: var(--primary);
+        background: rgba(255, 255, 255, 0.45);
+        border: 1px solid var(--card-border);
+        backdrop-filter: blur(12px);
+      }
+
+      .btn:hover,
+      .btn:focus-visible {
+        transform: translateY(-2px);
+      }
+
+      .btn--primary:hover,
+      .btn--primary:focus-visible {
+        box-shadow: 0 18px 40px rgba(18, 20, 44, 0.32);
+      }
+
+      .hero__note {
+        margin-top: 1.4rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .hero__visual {
+        position: relative;
+      }
+
+      .hero__card {
+        backdrop-filter: blur(20px);
+        background: var(--card-bg);
+        border-radius: 22px;
+        padding: 2.5rem 2rem;
+        border: 1px solid var(--card-border);
+        box-shadow: var(--card-shadow);
+        position: relative;
+        isolation: isolate;
+      }
+
+      .hero__card::after {
+        content: "";
+        position: absolute;
+        inset: 4% 10%;
+        background: linear-gradient(135deg, rgba(255, 0, 80, 0.25), rgba(0, 242, 234, 0.15));
+        border-radius: 18px;
+        z-index: -1;
+      }
+
+      .hero__card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 1.2rem;
+        margin-left: 45px;
+      }
+
+      .hero__card-steps {
+        display: grid;
+        gap: 1rem;
+        margin-left: 45px;
+      }
+
+      .hero__card-step {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+      }
+
+      .hero__card-icon {
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 14px;
+        background: rgba(15, 16, 45, 0.08);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      main {
+        padding: 0 clamp(1.5rem, 5vw, 6rem) clamp(4rem, 6vw, 6rem);
+        display: grid;
+        gap: clamp(3rem, 6vw, 5rem);
+      }
+
+      .panel {
+        border-radius: 26px;
+        padding: clamp(2.5rem, 5vw, 4.5rem);
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(18px);
+      }
+
+      .panel--alt {
+        background: rgba(10, 11, 25, 0.75);
+        border-color: rgba(255, 255, 255, 0.12);
+        color: #f4f4fc;
+      }
+
+      .panel--highlight {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(10, 10, 30, 0.78), rgba(255, 0, 80, 0.18));
+        border-color: rgba(255, 255, 255, 0.16);
+        color: #f7f7ff;
+      }
+
+      .panel--highlight::after {
+        content: "";
+        position: absolute;
+        inset: 18% -20% -25% 45%;
+        background: radial-gradient(circle at top, rgba(0, 242, 234, 0.35), transparent 60%);
+        filter: blur(70px);
+        pointer-events: none;
+      }
+
+      .panel--highlight > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .panel h2 {
+        margin: 0 0 1.75rem;
+        font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+        letter-spacing: -0.01em;
+      }
+
+      .steps {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .step {
+        padding: 1.6rem;
+        border-radius: 18px;
+        border: 1px solid rgba(18, 20, 44, 0.08);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 18px 40px rgba(18, 20, 44, 0.08);
+      }
+
+      .step__index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.2rem;
+        height: 2.2rem;
+        margin-bottom: 1rem;
+        border-radius: 50%;
+        background: rgba(255, 0, 80, 0.15);
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .step h3 {
+        margin: 0 0 0.6rem;
+        font-size: 1.1rem;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.96rem;
+      }
+
       code {
-        background: rgba(127, 127, 127, 0.15);
-        padding: 0.1rem 0.35rem;
+        background: rgba(14, 16, 45, 0.08);
+        padding: 0.12rem 0.4rem;
         border-radius: 6px;
+      }
+
+      .faq {
+        display: grid;
+        gap: 1.4rem;
+      }
+
+      .faq-item {
+        border-radius: 18px;
+        padding: 1.4rem 1.6rem;
+        background: rgba(6, 7, 20, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .faq-item h3 {
+        margin: 0 0 0.65rem;
+        font-size: 1.05rem;
+      }
+
+      .faq-item p {
+        margin: 0;
+        font-size: 0.96rem;
+        color: rgba(244, 244, 252, 0.85);
+      }
+
+      .logos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.4rem;
+        align-items: center;
+      }
+
+      .logos span {
+        padding: 0.75rem 1.35rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.6);
+        color: rgba(10, 11, 25, 0.7);
+        font-weight: 600;
+        border: 1px solid rgba(10, 11, 25, 0.12);
+        transition: filter 240ms ease, transform 240ms ease;
+      }
+
+      .logos span:hover,
+      .logos span:focus-visible {
+        filter: saturate(1.2) brightness(1.05);
+        transform: translateY(-2px);
+      }
+
+      .metrics {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .metric {
+        padding: 1.75rem;
+        border-radius: 20px;
+        background: rgba(8, 10, 24, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 18px 45px rgba(4, 6, 18, 0.3);
+      }
+
+      .metric__label {
+        font-size: 0.95rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: rgba(247, 247, 255, 0.7);
+        margin-bottom: 0.5rem;
+      }
+
+      .metric__value {
+        font-size: 2.3rem;
+        font-weight: 700;
+        margin: 0 0 0.65rem;
+        letter-spacing: -0.03em;
+      }
+
+      .metric__text {
+        margin: 0;
+        font-size: 0.95rem;
+        color: rgba(247, 247, 255, 0.8);
+      }
+
+      footer {
+        padding: clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 5vw, 6rem) clamp(2rem, 4vw, 3rem);
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+
+      .footer__inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer__links {
+        display: inline-flex;
+        gap: 1.15rem;
+        flex-wrap: wrap;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      a:hover,
+      a:focus-visible {
+        color: var(--accent);
+      }
+
+      .notice {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.5rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.2rem;
+        font-size: 0.9rem;
+      }
+
+      .notice strong {
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="box">
-      <h1>TikTok OAuth</h1>
-      <p>
-        本サービスへのログインを行います。TikTok
-        アカウントを利用して認証します。
-      </p>
-      <div class="actions">
-        <a
-          class="btn"
-          href="/auth/login"
-          aria-label="TikTok アカウントでログイン"
-          >TikTok でログイン</a
-        >
-      </div>
-      <div class="links" aria-live="polite">
-        <p style="margin: 0.25rem 0 0.5rem">
-          続行することで、<a href="/terms-of-service">利用規約</a>および
-          <a href="/privacy-policy">プライバシーポリシー</a
-          >に同意したものとみなします。
-        </p>
+    <div class="page">
+      <header class="hero">
+        <div class="hero__layout">
+          <div class="hero__content">
+            <div class="notice">
+              <strong>NEW</strong>
+              メンテナンス予定があればこちらに表示されます
+            </div>
+            <span class="hero__badge">
+              <span class="hero__badge-dot" aria-hidden="true"></span>
+              TikTok OAuth Portal
+            </span>
+            <h1>
+              <span class="hero__headline-line">動画インサイトで</span>
+              <span class="hero__headline-line">TikTok アカウントの</span>
+              <span class="hero__headline-line">マーケティングを加速。</span>
+            </h1>
+            <p class="hero__lead">
+              TikTok アカウントでのシームレスなサインインと同時に、投稿動画の再生数・いいね数などのインサイトデータを一元管理。
+              コンテンツごとの成果を即座に可視化し、運用の意思決定をスピードアップします。
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="/auth/login" aria-label="TikTok アカウントでログイン">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                  <path d="M15.5 3v3.73c1.34.94 2.98 1.51 4.75 1.51v3.4a9.05 9.05 0 0 1-4.75-1.37v6.72a5.99 5.99 0 1 1-5.99-5.99c.37 0 .73.04 1.08.11V9.26a9.02 9.02 0 0 0-1.08-.07 9.39 9.39 0 1 0 9.38 9.38V3h-3.39Z" fill="currentColor"/>
+                </svg>
+                TikTok でログイン
+              </a>
+              <a class="btn btn--secondary" href="#faq" aria-label="サポート FAQ を表示">
+                サポートを見る
+              </a>
+            </div>
+            <p class="hero__note" aria-live="polite">
+              続行することで、<a href="/terms-of-service">利用規約</a>および
+              <a href="/privacy-policy">プライバシーポリシー</a>に同意したものとみなします。
+            </p>
+          </div>
+          <div class="hero__visual" aria-hidden="true">
+            <div class="hero__card">
+              <div class="hero__card-title">ログイン完了まで</div>
+              <div class="hero__card-steps">
+                <div class="hero__card-step">
+                  <span class="hero__card-icon">01</span>
+                  <div>
+                    TikTok ログインボタンをタップして認証フローを開始します
+                  </div>
+                </div>
+                <div class="hero__card-step">
+                  <span class="hero__card-icon">02</span>
+                  <div>
+                    TikTok の認可画面で許可を確認、承認
+                  </div>
+                </div>
+                <div class="hero__card-step">
+                  <span class="hero__card-icon">03</span>
+                  <div>
+                    コールバックでアクセストークンを安全に受け取るだけ
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="flow">
+          <h2 id="flow">ログインはかんたん 3 ステップ</h2>
+          <div class="steps">
+            <article class="step">
+              <div class="step__index">1</div>
+              <h3>ユーザーを誘導</h3>
+              <p>
+                アプリや Web サービスからログインボタンをタップすると、
+                <code>/auth/login</code> 経由で TikTok 認証フローへ移動します。
+              </p>
+            </article>
+            <article class="step">
+              <div class="step__index">2</div>
+              <h3>安全な承認</h3>
+              <p>
+                TikTok の公式認可画面にて許可を確認。認証情報は暗号化したセッションで扱います。
+              </p>
+            </article>
+            <article class="step">
+              <div class="step__index">3</div>
+              <h3>完了通知</h3>
+              <p>
+                コールバック URL でアクセストークンを受け取り、サービス側でユーザーデータと安全にひも付けます。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel panel--highlight" aria-labelledby="insights">
+          <h2 id="insights">インサイトで運用効率を最大化</h2>
+          <p style="margin: 0 0 2rem; max-width: 680px;">
+            API 経由で TikTok のリッチな分析データを取得。ダッシュボードや BI 連携に流し込むことで、
+            企画・検証・改善のサイクルを短期間で回し、ファンとの距離を縮めます。
+          </p>
+          <div class="metrics">
+            <article class="metric">
+              <div class="metric__label">Views</div>
+              <p class="metric__value">+38%</p>
+              <p class="metric__text">
+                直近 7 日間の平均再生数の伸び率を把握し、アルゴリズム変化に即応。
+              </p>
+            </article>
+            <article class="metric">
+              <div class="metric__label">Engagement</div>
+              <p class="metric__value">12.4%</p>
+              <p class="metric__text">
+                いいね数・コメント数をリアルタイムで集計し、反応の高い投稿を抽出。
+              </p>
+            </article>
+            <article class="metric">
+              <div class="metric__label">Content Health</div>
+              <p class="metric__value">A</p>
+              <p class="metric__text">
+                投稿ごとの離脱率や視聴完了率を評価して、次の動画テーマと尺を最適化。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel panel--alt" id="faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">よくある質問</h2>
+          <div class="faq">
+            <div class="faq-item">
+              <h3>どのデータが取得されますか？</h3>
+              <p>
+                認可されたスコープに基づく最低限のプロフィール情報のみ取得し、利用用途を明確に提示します。
+              </p>
+            </div>
+            <div class="faq-item">
+              <h3>セキュリティはどう確保されていますか？</h3>
+              <p>
+                HTTPS での通信はもちろん、CSRF トークンや短命の状態値によりリクエスト改ざんを防止します。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer>
+        <div class="footer__inner">
         <p style="margin: 0.25rem 0 0.5rem">
           運営会社: <strong>株式会社湘南YOLO's</strong>（法人番号:
           5020001160514）<br />
@@ -82,7 +625,12 @@
             >https://www.yolo-shonan.com</a
           >
         </p>
-      </div>
+          <div class="footer__links">
+            <a href="/terms-of-service">利用規約</a>
+            <a href="/privacy-policy">プライバシーポリシー</a>
+          </div>
+        </div>
+      </footer>
     </div>
   </body>
 </html>
